@@ -19,7 +19,7 @@ Source of truth for features: the clone analysis doc (58 use cases, data model) 
 | Recurrence | RFC 5545 RRULE string, validated with `rlanvin/php-rrule` | Covers every repeat-picker option; maps to EventKit |
 | Next occurrence | Created by the server when a recurring task goes from open to completed; stored in `next_task_id` so it is created once | Two offline devices completing the same task cannot spawn two copies |
 | List placement | Group and sort order of a list live on the user's `list_members` row (the owner has one too) | Groups are per user (analysis doc), so a shared list can sit in a different group for each member |
-| Files | Private local disk `storage/app/attachments`, downloaded through an authorised endpoint; 25 MB cap | Swappable for S3 later via Laravel's filesystem config |
+| Files | Private local disk `storage/app/private/attachments`, downloaded through an authorised endpoint; 25 MB cap | Swappable for S3 later via Laravel's filesystem config |
 | Apple / Google sign-in | The app sends the provider's ID token; the server verifies its signature against Apple's / Google's public keys (JWKS), audience and expiry | No client secrets needed for sign-in |
 
 ## Database schema (MySQL 8, utf8mb4)
@@ -70,7 +70,7 @@ Laravel default (email, token, created_at).
 | Column | Type | Notes |
 | --- | --- | --- |
 | id | CHAR(36) PK | |
-| owner_id | CHAR(36) FK users, cascade | |
+| owner_id | CHAR(36) NULL FK users, set null | Null only on the tombstone left when the owner deletes their account |
 | name | VARCHAR(255) | |
 | emoji | VARCHAR(16) NULL | |
 | theme_color | VARCHAR(32) NULL | Figma token name, e.g. `violet`, `lagoon` |
@@ -170,8 +170,8 @@ Responses wrap the payload in `{"data": …}`; lists add `meta` when paged. Erro
 ### Health and auth
 | Method | Path | Body / query | Returns |
 | --- | --- | --- | --- |
-| GET | `/health` (public) | | `{status, time}` |
-| POST | `/auth/register` (public) | `name, email, password, device_name` | `{token, user}`; creates the default "Tasks" list |
+| GET | `/health` (public) | | `{status, database, time}` |
+| POST | `/auth/register` (public) | `name, email, password, device_name, timezone?` | `{token, user, is_new}`; creates the default "Tasks" list |
 | POST | `/auth/login` (public) | `email, password, device_name` | `{token, user}` |
 | POST | `/auth/apple` (public) | `identity_token, name?, device_name` | `{token, user, is_new}`; links to an existing user with the same verified email |
 | POST | `/auth/google` (public) | `id_token, device_name` | `{token, user, is_new}` |
@@ -316,13 +316,13 @@ Validation lives in each controller method (`$request->validate`), next to the e
 | --- | --- | --- |
 | M1 | Scaffold, Docker, migrations, `/health` | `make up` serves `/api/v1/health`; migrations run on MySQL |
 | M2 | Email, Apple and Google auth, `/me`, account deletion | Feature tests for each provider with signed test tokens |
-| M3 | Groups and lists (default list, placement, duplicate, cascade delete) | Feature tests, policies enforced |
+| M3 | Groups and lists (default list, placement, duplicate, cascade delete) | Feature tests, member/owner checks enforced |
 | M4 | Tasks and steps, recurrence | Tests for every repeat preset and the single-spawn rule |
 | M5 | Smart lists, counts, suggestions, search | Tests for each smart list and Planned buckets across a month boundary |
 | M6 | Sharing: invites, join, limit, stop sharing, members, assignment | Tests for owner/member permissions |
 | M7 | Attachments up to 25 MB | Tests for upload, download auth, 25 MB limit |
 | M8 | Sync with tombstones, purge command | Tests for cursor overlap, lost membership, full resync |
-| M9 | Postman collection, demo seeder, README, GitHub Actions CI | CI green on push |
+| M9 | Postman collection, demo seeder, README, GitHub Actions CI | CI runs the suite on every push to `main` |
 
 ## Open points
 - My Day lives on the task (per the analysis doc), so on a shared list a task added to My Day shows in every member's My Day. Moving it to a per-user table is a small change if you want it per person.
