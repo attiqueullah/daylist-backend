@@ -1,0 +1,1474 @@
+{
+  "info": {
+    "name": "Daylist API v1",
+    "description": "Local Daylist backend. Run Auth > login first (demo@daylist.test / password123); the token is saved automatically. Fill list_id, task_id etc. from responses.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080/api/v1"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "sync_cursor",
+      "value": ""
+    },
+    {
+      "key": "smart_list",
+      "value": "my-day"
+    },
+    {
+      "key": "list_id",
+      "value": ""
+    },
+    {
+      "key": "task_id",
+      "value": ""
+    },
+    {
+      "key": "step_id",
+      "value": ""
+    },
+    {
+      "key": "group_id",
+      "value": ""
+    },
+    {
+      "key": "attachment_id",
+      "value": ""
+    },
+    {
+      "key": "invite_token",
+      "value": ""
+    },
+    {
+      "key": "user_id",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Account",
+      "item": [
+        {
+          "name": "GET /health",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "GET /me",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PATCH /me",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Demo User\",\n  \"timezone\": \"Asia/Karachi\",\n  \"settings\": {\n    \"add_to_top\": true,\n    \"week_start\": \"monday\"\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "DELETE /me",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "POST /auth/apple",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/apple",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "apple"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identity_token\": \"<Apple identity token>\",\n  \"name\": \"Optional on first sign-in\",\n  \"device_name\": \"iPhone\"\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /auth/forgot-password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/forgot-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "forgot-password"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"demo@daylist.test\"\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /auth/google",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/google",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "google"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_token\": \"<Google ID token>\",\n  \"device_name\": \"iPhone\"\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /auth/login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"demo@daylist.test\",\n  \"password\": \"password123\",\n  \"device_name\": \"Postman\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const d = pm.response.json().data;",
+                  "if (d && d.token) pm.collectionVariables.set('token', d.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /auth/logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /auth/register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Demo User\",\n  \"email\": \"demo2@daylist.test\",\n  \"password\": \"password123\",\n  \"device_name\": \"Postman\",\n  \"timezone\": \"Asia/Karachi\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const d = pm.response.json().data;",
+                  "if (d && d.token) pm.collectionVariables.set('token', d.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /auth/reset-password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/reset-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "reset-password"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"demo@daylist.test\",\n  \"token\": \"<token from email>\",\n  \"password\": \"new-password\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Groups",
+      "item": [
+        {
+          "name": "GET /groups",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/groups",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "groups"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /groups",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/groups",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "groups"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Home\"\n}"
+            }
+          }
+        },
+        {
+          "name": "PATCH /groups/{group}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/groups/{{group_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "groups",
+                "{{group_id}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"House\",\n  \"is_collapsed\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "DELETE /groups/{group}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/groups/{{group_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "groups",
+                "{{group_id}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Lists",
+      "item": [
+        {
+          "name": "GET /lists",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/lists",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lists"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /lists",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/lists",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lists"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Groceries\",\n  \"emoji\": \"🛒\",\n  \"theme_color\": \"moss\"\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /lists/{list}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/lists/{{list_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lists",
+                "{{list_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PATCH /lists/{list}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/lists/{{list_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lists",
+                "{{list_id}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Shopping\",\n  \"sort_mode\": \"due_date\",\n  \"show_completed\": false,\n  \"group_id\": null,\n  \"sort_order\": 2\n}"
+            }
+          }
+        },
+        {
+          "name": "DELETE /lists/{list}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/lists/{{list_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lists",
+                "{{list_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /lists/{list}/duplicate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/lists/{{list_id}}/duplicate",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lists",
+                "{{list_id}}",
+                "duplicate"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Groceries copy\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tasks",
+      "item": [
+        {
+          "name": "GET /lists/{list}/tasks",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/lists/{{list_id}}/tasks?include_completed=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lists",
+                "{{list_id}}",
+                "tasks"
+              ],
+              "query": [
+                {
+                  "key": "include_completed",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /lists/{list}/tasks",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/lists/{{list_id}}/tasks?include_completed=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lists",
+                "{{list_id}}",
+                "tasks"
+              ],
+              "query": [
+                {
+                  "key": "include_completed",
+                  "value": "1"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Buy milk\",\n  \"is_important\": false,\n  \"due_date\": \"2026-11-20\",\n  \"my_day_date\": \"2026-11-14\",\n  \"recurrence\": \"FREQ=WEEKLY;BYDAY=MO\"\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /tasks",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tasks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tasks"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Quick add from My Day\",\n  \"my_day_date\": \"2026-11-14\"\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /tasks/{task}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tasks/{{task_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tasks",
+                "{{task_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PATCH /tasks/{task}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tasks/{{task_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tasks",
+                "{{task_id}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_completed\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "DELETE /tasks/{task}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tasks/{{task_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tasks",
+                "{{task_id}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Steps",
+      "item": [
+        {
+          "name": "PATCH /steps/{step}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/steps/{{step_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "steps",
+                "{{step_id}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_completed\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "DELETE /steps/{step}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/steps/{{step_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "steps",
+                "{{step_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /steps/{step}/promote",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/steps/{{step_id}}/promote",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "steps",
+                "{{step_id}}",
+                "promote"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /tasks/{task}/steps",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tasks/{{task_id}}/steps",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tasks",
+                "{{task_id}}",
+                "steps"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /tasks/{task}/steps",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tasks/{{task_id}}/steps",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tasks",
+                "{{task_id}}",
+                "steps"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Whole wheat\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Smart lists & search",
+      "item": [
+        {
+          "name": "GET /my-day/suggestions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/my-day/suggestions?today=2026-11-14",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "my-day",
+                "suggestions"
+              ],
+              "query": [
+                {
+                  "key": "today",
+                  "value": "2026-11-14"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /search",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/search?q=milk&include_completed=0",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "milk"
+                },
+                {
+                  "key": "include_completed",
+                  "value": "0"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /smart-lists/counts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/smart-lists/counts?today=2026-11-14",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "smart-lists",
+                "counts"
+              ],
+              "query": [
+                {
+                  "key": "today",
+                  "value": "2026-11-14"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /smart-lists/{name}/tasks",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/smart-lists/{{smart_list}}/tasks?today=2026-11-14",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "smart-lists",
+                "{{smart_list}}",
+                "tasks"
+              ],
+              "query": [
+                {
+                  "key": "today",
+                  "value": "2026-11-14"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sharing",
+      "item": [
+        {
+          "name": "GET /invites/{token}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/invites/{{invite_token}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "invites",
+                "{{invite_token}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /invites/{token}/accept",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/invites/{{invite_token}}/accept",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "invites",
+                "{{invite_token}}",
+                "accept"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /lists/{list}/invites",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/lists/{{list_id}}/invites",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lists",
+                "{{list_id}}",
+                "invites"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"expires_in_days\": 7\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /lists/{list}/members",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/lists/{{list_id}}/members",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lists",
+                "{{list_id}}",
+                "members"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PATCH /lists/{list}/members/me",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/lists/{{list_id}}/members/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lists",
+                "{{list_id}}",
+                "members",
+                "me"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notifications_muted\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "DELETE /lists/{list}/members/{userId}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/lists/{{list_id}}/members/{{user_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lists",
+                "{{list_id}}",
+                "members",
+                "{{user_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PATCH /lists/{list}/sharing",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/lists/{{list_id}}/sharing",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lists",
+                "{{list_id}}",
+                "sharing"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"limited\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "DELETE /lists/{list}/sharing",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/lists/{{list_id}}/sharing",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lists",
+                "{{list_id}}",
+                "sharing"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Attachments",
+      "item": [
+        {
+          "name": "DELETE /attachments/{attachment}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/attachments/{{attachment_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "attachments",
+                "{{attachment_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /attachments/{attachment}/download",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/attachments/{{attachment_id}}/download",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "attachments",
+                "{{attachment_id}}",
+                "download"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /tasks/{task}/attachments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tasks/{{task_id}}/attachments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tasks",
+                "{{task_id}}",
+                "attachments"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /tasks/{task}/attachments",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tasks/{{task_id}}/attachments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tasks",
+                "{{task_id}}",
+                "attachments"
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sync",
+      "item": [
+        {
+          "name": "GET /sync",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/sync?since={{sync_cursor}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "sync"
+              ],
+              "query": [
+                {
+                  "key": "since",
+                  "value": "{{sync_cursor}}"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const d = pm.response.json().data;",
+                  "if (d && d.cursor) pm.collectionVariables.set('sync_cursor', d.cursor);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
