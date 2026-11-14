@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Daylist API v1",
-    "description": "Local Daylist backend. Run Auth > login first (demo@daylist.test / password123); the token is saved automatically. Fill list_id, task_id etc. from responses.",
+    "description": "Daylist API on your Mac (make up, then http://localhost:8080).\n\n1. Run Auth > POST /auth/login (demo@daylist.test / password123 after `make fresh`). The token is saved for every other request.\n2. Run Lists > GET /lists or POST /lists: list_id is saved. Creating a task, step, group, attachment or invite saves its id too.\n3. Change base_url in the collection Variables tab if you use another port or your Mac's IP from an iPhone.\nSmart-list requests send today={{today}}, set automatically to your Mac's date.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
@@ -58,6 +58,10 @@
     {
       "key": "user_id",
       "value": ""
+    },
+    {
+      "key": "today",
+      "value": ""
     }
   ],
   "item": [
@@ -86,7 +90,18 @@
             "auth": {
               "type": "noauth"
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "GET /me",
@@ -107,7 +122,18 @@
                 "me"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "PATCH /me",
@@ -136,7 +162,18 @@
               "mode": "raw",
               "raw": "{\n  \"name\": \"Demo User\",\n  \"timezone\": \"Asia/Karachi\",\n  \"settings\": {\n    \"add_to_top\": true,\n    \"week_start\": \"monday\"\n  }\n}"
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "DELETE /me",
@@ -157,7 +194,18 @@
                 "me"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -195,7 +243,18 @@
               "mode": "raw",
               "raw": "{\n  \"identity_token\": \"<Apple identity token>\",\n  \"name\": \"Optional on first sign-in\",\n  \"device_name\": \"iPhone\"\n}"
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "POST /auth/forgot-password",
@@ -228,7 +287,18 @@
               "mode": "raw",
               "raw": "{\n  \"email\": \"demo@daylist.test\"\n}"
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "POST /auth/google",
@@ -261,7 +331,18 @@
               "mode": "raw",
               "raw": "{\n  \"id_token\": \"<Google ID token>\",\n  \"device_name\": \"iPhone\"\n}"
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "POST /auth/login",
@@ -301,8 +382,13 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "const d = pm.response.json().data;",
-                  "if (d && d.token) pm.collectionVariables.set('token', d.token);"
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+                  "const body = pm.response.json();",
+                  "const d = body.data;",
+                  "if (d) {",
+                  "  pm.collectionVariables.set('token', d.token);",
+                  "  pm.collectionVariables.set('user_id', d.user.id);",
+                  "}"
                 ]
               }
             }
@@ -328,7 +414,18 @@
                 "logout"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "POST /auth/register",
@@ -368,8 +465,13 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "const d = pm.response.json().data;",
-                  "if (d && d.token) pm.collectionVariables.set('token', d.token);"
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+                  "const body = pm.response.json();",
+                  "const d = body.data;",
+                  "if (d) {",
+                  "  pm.collectionVariables.set('token', d.token);",
+                  "  pm.collectionVariables.set('user_id', d.user.id);",
+                  "}"
                 ]
               }
             }
@@ -406,7 +508,18 @@
               "mode": "raw",
               "raw": "{\n  \"email\": \"demo@daylist.test\",\n  \"token\": \"<token from email>\",\n  \"password\": \"new-password\"\n}"
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -432,7 +545,18 @@
                 "groups"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "POST /groups",
@@ -461,7 +585,23 @@
               "mode": "raw",
               "raw": "{\n  \"name\": \"Home\"\n}"
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+                  "const body = pm.response.json();",
+                  "const d = body.data;",
+                  "if (d) {",
+                  "  pm.collectionVariables.set('group_id', d.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "PATCH /groups/{group}",
@@ -491,7 +631,18 @@
               "mode": "raw",
               "raw": "{\n  \"name\": \"House\",\n  \"is_collapsed\": true\n}"
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "DELETE /groups/{group}",
@@ -513,7 +664,18 @@
                 "{{group_id}}"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -539,7 +701,23 @@
                 "lists"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+                  "const body = pm.response.json();",
+                  "const d = body.data;",
+                  "if (d) {",
+                  "  pm.collectionVariables.set('list_id', (d.find(l => !l.is_default) || d[0]).id);",
+                  "}"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "POST /lists",
@@ -568,7 +746,23 @@
               "mode": "raw",
               "raw": "{\n  \"name\": \"Groceries\",\n  \"emoji\": \"🛒\",\n  \"theme_color\": \"moss\"\n}"
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+                  "const body = pm.response.json();",
+                  "const d = body.data;",
+                  "if (d) {",
+                  "  pm.collectionVariables.set('list_id', d.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "GET /lists/{list}",
@@ -590,7 +784,18 @@
                 "{{list_id}}"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "PATCH /lists/{list}",
@@ -620,7 +825,18 @@
               "mode": "raw",
               "raw": "{\n  \"name\": \"Shopping\",\n  \"sort_mode\": \"due_date\",\n  \"show_completed\": false,\n  \"group_id\": null,\n  \"sort_order\": 2\n}"
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "DELETE /lists/{list}",
@@ -642,7 +858,18 @@
                 "{{list_id}}"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "POST /lists/{list}/duplicate",
@@ -673,7 +900,18 @@
               "mode": "raw",
               "raw": "{\n  \"name\": \"Groceries copy\"\n}"
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -707,7 +945,23 @@
                 }
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+                  "const body = pm.response.json();",
+                  "const d = body.data;",
+                  "if (d) {",
+                  "  pm.collectionVariables.set('task_id', d.length ? d[0].id : pm.collectionVariables.get(\"task_id\"));",
+                  "}"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "POST /lists/{list}/tasks",
@@ -742,9 +996,25 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Buy milk\",\n  \"is_important\": false,\n  \"due_date\": \"2026-11-20\",\n  \"my_day_date\": \"2026-11-14\",\n  \"recurrence\": \"FREQ=WEEKLY;BYDAY=MO\"\n}"
+              "raw": "{\n  \"title\": \"Buy milk\",\n  \"is_important\": false,\n  \"due_date\": \"2026-11-20\",\n  \"my_day_date\": \"{{today}}\",\n  \"recurrence\": \"FREQ=WEEKLY;BYDAY=MO\"\n}"
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+                  "const body = pm.response.json();",
+                  "const d = body.data;",
+                  "if (d) {",
+                  "  pm.collectionVariables.set('task_id', d.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "POST /tasks",
@@ -771,9 +1041,25 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Quick add from My Day\",\n  \"my_day_date\": \"2026-11-14\"\n}"
+              "raw": "{\n  \"title\": \"Quick add from My Day\",\n  \"my_day_date\": \"{{today}}\"\n}"
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+                  "const body = pm.response.json();",
+                  "const d = body.data;",
+                  "if (d) {",
+                  "  pm.collectionVariables.set('task_id', d.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "GET /tasks/{task}",
@@ -795,7 +1081,18 @@
                 "{{task_id}}"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "PATCH /tasks/{task}",
@@ -825,7 +1122,18 @@
               "mode": "raw",
               "raw": "{\n  \"is_completed\": true\n}"
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "DELETE /tasks/{task}",
@@ -847,7 +1155,18 @@
                 "{{task_id}}"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -882,7 +1201,18 @@
               "mode": "raw",
               "raw": "{\n  \"is_completed\": true\n}"
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "DELETE /steps/{step}",
@@ -904,7 +1234,18 @@
                 "{{step_id}}"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "POST /steps/{step}/promote",
@@ -927,7 +1268,18 @@
                 "promote"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "GET /tasks/{task}/steps",
@@ -950,7 +1302,18 @@
                 "steps"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "POST /tasks/{task}/steps",
@@ -981,7 +1344,23 @@
               "mode": "raw",
               "raw": "{\n  \"title\": \"Whole wheat\"\n}"
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+                  "const body = pm.response.json();",
+                  "const d = body.data;",
+                  "if (d) {",
+                  "  pm.collectionVariables.set('step_id', d.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -999,7 +1378,7 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/my-day/suggestions?today=2026-11-14",
+              "raw": "{{base_url}}/my-day/suggestions?today={{today}}",
               "host": [
                 "{{base_url}}"
               ],
@@ -1010,11 +1389,22 @@
               "query": [
                 {
                   "key": "today",
-                  "value": "2026-11-14"
+                  "value": "{{today}}"
                 }
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "GET /search",
@@ -1045,7 +1435,18 @@
                 }
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "GET /smart-lists/counts",
@@ -1058,7 +1459,7 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/smart-lists/counts?today=2026-11-14",
+              "raw": "{{base_url}}/smart-lists/counts?today={{today}}",
               "host": [
                 "{{base_url}}"
               ],
@@ -1069,11 +1470,22 @@
               "query": [
                 {
                   "key": "today",
-                  "value": "2026-11-14"
+                  "value": "{{today}}"
                 }
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "GET /smart-lists/{name}/tasks",
@@ -1086,7 +1498,7 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/smart-lists/{{smart_list}}/tasks?today=2026-11-14",
+              "raw": "{{base_url}}/smart-lists/{{smart_list}}/tasks?today={{today}}",
               "host": [
                 "{{base_url}}"
               ],
@@ -1098,11 +1510,22 @@
               "query": [
                 {
                   "key": "today",
-                  "value": "2026-11-14"
+                  "value": "{{today}}"
                 }
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -1129,7 +1552,18 @@
                 "{{invite_token}}"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "POST /invites/{token}/accept",
@@ -1152,7 +1586,18 @@
                 "accept"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "POST /lists/{list}/invites",
@@ -1183,7 +1628,23 @@
               "mode": "raw",
               "raw": "{\n  \"expires_in_days\": 7\n}"
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+                  "const body = pm.response.json();",
+                  "const d = body.data;",
+                  "if (d) {",
+                  "  pm.collectionVariables.set('invite_token', d.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "GET /lists/{list}/members",
@@ -1206,7 +1667,18 @@
                 "members"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "PATCH /lists/{list}/members/me",
@@ -1238,7 +1710,18 @@
               "mode": "raw",
               "raw": "{\n  \"notifications_muted\": true\n}"
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "DELETE /lists/{list}/members/{userId}",
@@ -1262,7 +1745,18 @@
                 "{{user_id}}"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "PATCH /lists/{list}/sharing",
@@ -1293,7 +1787,18 @@
               "mode": "raw",
               "raw": "{\n  \"limited\": true\n}"
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "DELETE /lists/{list}/sharing",
@@ -1316,7 +1821,18 @@
                 "sharing"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -1343,7 +1859,18 @@
                 "{{attachment_id}}"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "GET /attachments/{attachment}/download",
@@ -1366,7 +1893,18 @@
                 "download"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "GET /tasks/{task}/attachments",
@@ -1389,7 +1927,18 @@
                 "attachments"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "POST /tasks/{task}/attachments",
@@ -1422,7 +1971,23 @@
                 }
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+                  "const body = pm.response.json();",
+                  "const d = body.data;",
+                  "if (d) {",
+                  "  pm.collectionVariables.set('attachment_id', d.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -1461,14 +2026,32 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "const d = pm.response.json().data;",
-                  "if (d && d.cursor) pm.collectionVariables.set('sync_cursor', d.cursor);"
+                  "pm.test('Status is 2xx', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+                  "const body = pm.response.json();",
+                  "const d = body.data;",
+                  "if (d) {",
+                  "  pm.collectionVariables.set('sync_cursor', d.cursor);",
+                  "}"
                 ]
               }
             }
           ]
         }
       ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Your Mac's local date, sent as ?today= so My Day matches your day.",
+          "const now = new Date();",
+          "const pad = n => String(n).padStart(2, '0');",
+          "pm.collectionVariables.set('today', `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`);"
+        ]
+      }
     }
   ]
 }
