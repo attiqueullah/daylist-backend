@@ -978,7 +978,7 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/lists/{{list_id}}/tasks?include_completed=1",
+              "raw": "{{base_url}}/lists/{{list_id}}/tasks",
               "host": [
                 "{{base_url}}"
               ],
@@ -986,12 +986,6 @@
                 "lists",
                 "{{list_id}}",
                 "tasks"
-              ],
-              "query": [
-                {
-                  "key": "include_completed",
-                  "value": "1"
-                }
               ]
             },
             "body": {
